@@ -1,28 +1,7 @@
 RegisterNetEvent('kt_identity:openMenu')
-AddEventHandler('kt_identity:openMenu', function()
-    local source = source
-    local xPlayer = ESX.GetPlayerFromId(source)
-    
-    if not xPlayer then
-        if Config.Debug then
-            print('^3[KT Identity]^7 ESX Player not found for source: ' .. source)
-        end
-        return
-    end
-
-    local menuData = GetMenuData(xPlayer.identifier)
-    
-    TriggerClientEvent('kt_identity:receiveMenuData', source, menuData)
-    
-    if Config.Debug then
-        print(string.format(
-            '^2[KT Identity]^7 Menu opened for: %s (%d/%d characters) - Can create: %s',
-            xPlayer.identifier,
-            #menuData.characters,
-            menuData.maxCharacters,
-            menuData.canCreateMore and 'Yes' or 'No'
-        ))
-    end
+AddEventHandler('kt_identity:openMenu', function(targetSource)
+    local source = targetSource or source
+    OpenCharacterMenu(source)
 end)
 
 RegisterNetEvent('kt_identity:selectCharacter')
@@ -160,30 +139,66 @@ AddEventHandler('playerConnecting', function(name, setKickReason, deferrals)
     end
 end)
 
+-- Fonction helper pour ouvrir le menu
+function OpenCharacterMenu(playerId)
+    local xPlayer = ESX.GetPlayerFromId(playerId)
+    
+    if not xPlayer then
+        if Config.Debug then
+            print('^3[KT Identity]^7 ESX Player not found for source: ' .. playerId)
+        end
+        return
+    end
+
+    local menuData = GetMenuData(xPlayer.identifier)
+    
+    TriggerClientEvent('kt_identity:receiveMenuData', playerId, menuData)
+    
+    if Config.Debug then
+        print(string.format(
+            '^2[KT Identity]^7 Menu opened for: %s (%d/%d characters) - Can create: %s',
+            xPlayer.identifier,
+            #menuData.characters,
+            menuData.maxCharacters,
+            menuData.canCreateMore and 'Yes' or 'No'
+        ))
+    end
+end
+
 AddEventHandler('esx:playerLoaded', function(playerId, xPlayer)
     if Config.Debug then
         local maxChars = GetMaxCharactersForPlayer(xPlayer.identifier)
         print(string.format('^2[KT Identity]^7 ESX Player loaded: %s (Max characters: %d)', xPlayer.identifier, maxChars))
     end
     
-    local characters = GetPlayerCharacters(xPlayer.identifier)
-    
+    -- Attendre que le joueur soit complètement chargé
     Citizen.Wait(2000)
     
+    local characters = GetPlayerCharacters(xPlayer.identifier)
+    
+    -- Si aucun personnage n'existe, ouvrir le menu de création
     if #characters == 0 then
-        TriggerEvent('kt_identity:openMenu', playerId)
+        if Config.Debug then
+            print('^2[KT Identity]^7 No characters found, opening menu for: ' .. xPlayer.identifier)
+        end
+        OpenCharacterMenu(playerId)
     else
+        -- Si des personnages existent, vérifier le personnage actif
         local activeChar = GetActiveCharacter(xPlayer.identifier)
         
-        if not activeChar then
-            TriggerEvent('kt_identity:openMenu', playerId)
-        else
-            if Config.AutoLoadLastCharacter then
-                LoadESXCharacter(playerId, activeChar)
-                TriggerClientEvent('kt_identity:spawnPlayer', playerId, activeChar)
-            else
-                TriggerEvent('kt_identity:openMenu', playerId)
+        if Config.AutoLoadLastCharacter and activeChar then
+            -- Charger automatiquement le dernier personnage
+            if Config.Debug then
+                print('^2[KT Identity]^7 Auto-loading last character for: ' .. xPlayer.identifier)
             end
+            LoadESXCharacter(playerId, activeChar)
+            TriggerClientEvent('kt_identity:spawnPlayer', playerId, activeChar)
+        else
+            -- Toujours ouvrir le menu de sélection
+            if Config.Debug then
+                print('^2[KT Identity]^7 Opening character selection menu for: ' .. xPlayer.identifier)
+            end
+            OpenCharacterMenu(playerId)
         end
     end
 end)

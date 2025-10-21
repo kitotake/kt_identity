@@ -1,14 +1,10 @@
 import { useCallback } from 'react';
 
-
-
 export const useNUI = () => {
   const post = useCallback(async <T = any>(
     event: string, 
     data: any = {}
   ): Promise<T | null> => {
-   
-
     try {
       const response = await fetch(`https://${GetParentResourceName()}/${event}`, {
         method: 'POST',

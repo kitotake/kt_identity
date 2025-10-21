@@ -26,6 +26,7 @@ server_scripts {
     'server/main.lua',
 }
 
+-- Option 1 : Si vos fichiers sont dans nui/identity/
 ui_page 'nui/identity/index.html'
 
 files {
