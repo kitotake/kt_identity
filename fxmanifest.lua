@@ -3,7 +3,7 @@ game 'gta5'
 
 name "kt_identity"
 description 'KT Identity - Multi Character System for ESX'
-version '1.0.0'
+version '1.3.0'
 
 lua54 'yes'
 
@@ -14,7 +14,6 @@ shared_scripts {
 
 client_scripts {
     'client/camera.lua',
-    'client/nui_handler.lua',
     'client/spawn.lua',
     'client/main.lua',
 }
@@ -31,9 +30,8 @@ ui_page 'nui/identity/index.html'
 
 files {
     'nui/identity/index.html',
-    'nui/identity/style.css',
-    'nui/identity/script.js',
-    'nui/identity/img/*.png',
+    'nui/identity/assets/*.css',
+    'nui/identity/assets/*.js',
 }
 
 dependencies {

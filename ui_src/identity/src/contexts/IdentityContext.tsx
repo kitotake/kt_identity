@@ -1,7 +1,6 @@
 import React, { createContext, useContext, useState, useCallback } from 'react';
 import type { Character, OpenMenuData } from '../types/nui';
 import { useNUIEvent } from '../hooks/useNUIEvent';
-import { mockOpenMenuData } from '../utils/mockData';
 
 interface IdentityContextType {
   isVisible: boolean;
@@ -9,6 +8,7 @@ interface IdentityContextType {
   maxCharacters: number;
   availableNationalities: string[];
   selectedCharacter: Character | null;
+  canCreateMore: boolean;
   setSelectedCharacter: (character: Character | null) => void;
   closeMenu: () => void;
 }
@@ -16,21 +16,17 @@ interface IdentityContextType {
 const IdentityContext = createContext<IdentityContextType | undefined>(undefined);
 
 export const IdentityProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [isVisible, setIsVisible] = useState(import.meta.env.DEV);
-  const [characters, setCharacters] = useState<Character[]>(
-    import.meta.env.DEV ? mockOpenMenuData.characters : []
-  );
-  const [maxCharacters, setMaxCharacters] = useState(
-    import.meta.env.DEV ? mockOpenMenuData.maxCharacters : 5
-  );
-  const [availableNationalities, setAvailableNationalities] = useState<string[]>(
-    import.meta.env.DEV ? mockOpenMenuData.availableNationalities : []
-  );
+  const [isVisible, setIsVisible] = useState(false);
+  const [characters, setCharacters] = useState<Character[]>([]);
+  const [maxCharacters, setMaxCharacters] = useState(5);
+  const [availableNationalities, setAvailableNationalities] = useState<string[]>([]);
+  const [canCreateMore, setCanCreateMore] = useState(true);
   const [selectedCharacter, setSelectedCharacter] = useState<Character | null>(null);
 
   useNUIEvent<OpenMenuData>('openMenu', useCallback((data) => {
     setCharacters(data.characters);
     setMaxCharacters(data.maxCharacters);
+    setCanCreateMore(data.canCreateMore !== undefined ? data.canCreateMore : true);
     setAvailableNationalities(data.availableNationalities || [
       'Française',
       'Américaine',
@@ -75,6 +71,7 @@ export const IdentityProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         maxCharacters,
         availableNationalities,
         selectedCharacter,
+        canCreateMore,
         setSelectedCharacter,
         closeMenu,
       }}

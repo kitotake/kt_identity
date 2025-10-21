@@ -21,6 +21,29 @@ local Nationalities = {
     'Tunisienne'
 }
 
+function GetMaxCharactersForPlayer(identifier)
+    if Config.MultiCharacterWhitelist[identifier] then
+        return Config.MultiCharacterWhitelist[identifier]
+    end
+    
+    if Config.LimitedCharacters == 1 then
+        return 1
+    end
+    
+    return Config.MaxCharacters
+end
+
+function CanCreateNewCharacter(identifier)
+    local currentCount = GetCharacterCount(identifier)
+    local maxAllowed = GetMaxCharactersForPlayer(identifier)
+    
+    if Config.Debug then
+        print(string.format('^2[KT Identity]^7 Character check for %s: %d/%d', identifier, currentCount, maxAllowed))
+    end
+    
+    return currentCount < maxAllowed
+end
+
 function FormatCharactersForNUI(characters)
     local formatted = {}
     
@@ -73,8 +96,8 @@ function ValidateCharacterData(data)
 
     local age = os.difftime(os.time(), dob) / (365.25 * 24 * 60 * 60)
 
-    if age < 18 or age > Config.MaxAge then
-        return false, "Âge invalide (18-" .. Config.MaxAge .. " ans)"
+    if age < Config.MinAge or age > Config.MaxAge then
+        return false, "Âge invalide (" .. Config.MinAge .. "-" .. Config.MaxAge .. " ans)"
     end
 
     local validNationality = false
@@ -143,11 +166,13 @@ end
 function GetMenuData(identifier)
     local characters = GetPlayerCharacters(identifier)
     local formattedChars = FormatCharactersForNUI(characters)
+    local maxChars = GetMaxCharactersForPlayer(identifier)
     
     return {
         characters = formattedChars,
-        maxCharacters = Config.MaxCharacters,
-        availableNationalities = Nationalities
+        maxCharacters = maxChars,
+        availableNationalities = Nationalities,
+        canCreateMore = CanCreateNewCharacter(identifier)
     }
 end
 
@@ -156,3 +181,5 @@ exports('ValidateCharacterData', ValidateCharacterData)
 exports('LoadESXCharacter', LoadESXCharacter)
 exports('GetMenuData', GetMenuData)
 exports('GetNationalities', function() return Nationalities end)
+exports('GetMaxCharactersForPlayer', GetMaxCharactersForPlayer)
+exports('CanCreateNewCharacter', CanCreateNewCharacter)

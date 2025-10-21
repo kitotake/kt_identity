@@ -25,6 +25,7 @@ export interface OpenMenuData {
   characters: Character[];
   maxCharacters: number;
   availableNationalities: string[];
+  canCreateMore?: boolean;
 }
 
 export interface SelectCharacterData {

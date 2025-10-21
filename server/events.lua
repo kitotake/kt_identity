@@ -15,7 +15,13 @@ AddEventHandler('kt_identity:openMenu', function()
     TriggerClientEvent('kt_identity:receiveMenuData', source, menuData)
     
     if Config.Debug then
-        print('^2[KT Identity]^7 Menu opened for: ' .. xPlayer.identifier .. ' (' .. #menuData.characters .. ' characters)')
+        print(string.format(
+            '^2[KT Identity]^7 Menu opened for: %s (%d/%d characters) - Can create: %s',
+            xPlayer.identifier,
+            #menuData.characters,
+            menuData.maxCharacters,
+            menuData.canCreateMore and 'Yes' or 'No'
+        ))
     end
 end)
 
@@ -61,10 +67,13 @@ AddEventHandler('kt_identity:createCharacter', function(data)
         return
     end
 
-    local count = GetCharacterCount(xPlayer.identifier)
-    
-    if count >= Config.MaxCharacters then
-        TriggerClientEvent('esx:showNotification', source, '~r~Vous avez atteint la limite de ' .. Config.MaxCharacters .. ' personnages')
+    if not CanCreateNewCharacter(xPlayer.identifier) then
+        local maxChars = GetMaxCharactersForPlayer(xPlayer.identifier)
+        TriggerClientEvent('esx:showNotification', source, '~r~Vous avez atteint la limite de ' .. maxChars .. ' personnage(s)')
+        
+        if Config.Debug then
+            print(string.format('^3[KT Identity]^7 Character creation denied for %s: limit reached', xPlayer.identifier))
+        end
         return
     end
 
@@ -86,7 +95,13 @@ AddEventHandler('kt_identity:createCharacter', function(data)
         TriggerClientEvent('kt_identity:receiveMenuData', source, menuData)
         
         if Config.Debug then
-            print('^2[KT Identity]^7 Character created: ' .. data.firstname .. ' ' .. data.lastname .. ' (ID: ' .. characterId .. ')')
+            print(string.format(
+                '^2[KT Identity]^7 Character created: %s %s (ID: %s) for %s',
+                data.firstname,
+                data.lastname,
+                characterId,
+                xPlayer.identifier
+            ))
         end
     else
         TriggerClientEvent('esx:showNotification', source, '~r~Erreur lors de la création du personnage')
@@ -140,13 +155,15 @@ AddEventHandler('playerConnecting', function(name, setKickReason, deferrals)
     end
     
     if identifier and Config.Debug then
-        print('^2[KT Identity]^7 Player connecting: ' .. identifier)
+        local maxChars = GetMaxCharactersForPlayer(identifier)
+        print(string.format('^2[KT Identity]^7 Player connecting: %s (Max characters: %d)', identifier, maxChars))
     end
 end)
 
 AddEventHandler('esx:playerLoaded', function(playerId, xPlayer)
     if Config.Debug then
-        print('^2[KT Identity]^7 ESX Player loaded: ' .. xPlayer.identifier)
+        local maxChars = GetMaxCharactersForPlayer(xPlayer.identifier)
+        print(string.format('^2[KT Identity]^7 ESX Player loaded: %s (Max characters: %d)', xPlayer.identifier, maxChars))
     end
     
     local characters = GetPlayerCharacters(xPlayer.identifier)

@@ -1,16 +1,13 @@
 import { useCallback } from 'react';
 
-const isDevelopment = import.meta.env.DEV;
+
 
 export const useNUI = () => {
   const post = useCallback(async <T = any>(
     event: string, 
     data: any = {}
   ): Promise<T | null> => {
-    if (isDevelopment) {
-      console.log(`[DEV] NUI Callback: ${event}`, data);
-      return null;
-    }
+   
 
     try {
       const response = await fetch(`https://${GetParentResourceName()}/${event}`, {

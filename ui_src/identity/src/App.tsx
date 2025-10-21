@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { IdentityProvider, useIdentity } from '@contexts/IdentityContext';
 import { CharacterList } from './components/CharacterList';
@@ -10,7 +9,8 @@ const IdentityMenu: React.FC = () => {
   const { 
     isVisible, 
     characters, 
-    maxCharacters, 
+    maxCharacters,
+    canCreateMore,
     selectedCharacter, 
     setSelectedCharacter, 
     closeMenu 
@@ -69,7 +69,13 @@ const IdentityMenu: React.FC = () => {
     closeMenu();
   };
 
-  const canCreateMore = characters.length < maxCharacters;
+  const handleOpenCreateForm = () => {
+    if (!canCreateMore) {
+      alert(`⚠️ Vous avez atteint la limite de ${maxCharacters} personnage(s).\n\nContactez un administrateur si vous avez besoin de plus de personnages.`);
+      return;
+    }
+    setShowCreateForm(true);
+  };
 
   return (
     <div className="identity-menu">
@@ -91,7 +97,10 @@ const IdentityMenu: React.FC = () => {
             </button>
           </div>
           <p className="identity-menu__subtitle">
-            📊 {characters.length} / {maxCharacters} personnages créés
+            📊 {characters.length} / {maxCharacters} personnage{maxCharacters > 1 ? 's' : ''} créé{characters.length > 1 ? 's' : ''}
+            {!canCreateMore && maxCharacters === 1 && (
+              <span className="identity-menu__subtitle-warning"> • 🔒 Limite atteinte</span>
+            )}
           </p>
         </div>
 
@@ -121,12 +130,17 @@ const IdentityMenu: React.FC = () => {
         {!showCreateForm && (
           <div className="identity-menu__footer">
             <button
-              onClick={() => setShowCreateForm(true)}
+              onClick={handleOpenCreateForm}
               disabled={!canCreateMore}
               className="identity-menu__button identity-menu__button--create"
-              title={canCreateMore ? 'Créer un nouveau personnage' : 'Limite de personnages atteinte'}
+              title={
+                canCreateMore 
+                  ? 'Créer un nouveau personnage' 
+                  : `Limite de ${maxCharacters} personnage(s) atteinte`
+              }
             >
               ➕ Créer un personnage
+              {!canCreateMore && ' (Limite atteinte)'}
             </button>
             <button
               onClick={handleSelectCharacter}
