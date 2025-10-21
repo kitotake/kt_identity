@@ -5,7 +5,15 @@ export interface Character {
   dateofbirth: string;
   gender: 'male' | 'female';
   height: number;
+  nationality: string;
   avatar?: string;
+  addictions?: Addictions;
+}
+
+export interface Addictions {
+  cigarette: number; 
+  alcohol: number;   
+  drugs: number;     
 }
 
 export interface NUIMessage<T = any> {
@@ -16,6 +24,7 @@ export interface NUIMessage<T = any> {
 export interface OpenMenuData {
   characters: Character[];
   maxCharacters: number;
+  availableNationalities: string[];
 }
 
 export interface SelectCharacterData {
@@ -28,6 +37,8 @@ export interface CreateCharacterData {
   dateofbirth: string;
   gender: 'male' | 'female';
   height: number;
+  nationality: string;
+  addictions: Addictions;
 }
 
 export interface DeleteCharacterData {
@@ -39,5 +50,3 @@ export type NUICallback =
   | 'createCharacter'
   | 'deleteCharacter'
   | 'closeMenu';
-
-  

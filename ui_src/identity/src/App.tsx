@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { IdentityProvider, useIdentity } from '@contexts/IdentityContext';
-import { CharacterList } from '@components/CharacterList';
+import { CharacterList } from './components/CharacterList';
 import { CreateCharacterForm } from '@components/CreateCharacterForm';
 import { useNUI } from '@hooks/useNUI';
 import type { CreateCharacterData } from './types/nui';
@@ -19,7 +19,6 @@ const IdentityMenu: React.FC = () => {
   const { post } = useNUI();
   const [showCreateForm, setShowCreateForm] = useState(false);
 
-  // Gestion de la touche ESC
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
       if (e.key === 'Escape' && isVisible) {
@@ -54,7 +53,6 @@ const IdentityMenu: React.FC = () => {
     if (confirmed) {
       await post('deleteCharacter', { characterId: character.id });
       
-      // Désélectionner si c'était le personnage sélectionné
       if (selectedCharacter?.id === character.id) {
         setSelectedCharacter(null);
       }

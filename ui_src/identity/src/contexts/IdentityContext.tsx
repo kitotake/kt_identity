@@ -7,6 +7,7 @@ interface IdentityContextType {
   isVisible: boolean;
   characters: Character[];
   maxCharacters: number;
+  availableNationalities: string[];
   selectedCharacter: Character | null;
   setSelectedCharacter: (character: Character | null) => void;
   closeMenu: () => void;
@@ -22,11 +23,36 @@ export const IdentityProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   const [maxCharacters, setMaxCharacters] = useState(
     import.meta.env.DEV ? mockOpenMenuData.maxCharacters : 5
   );
+  const [availableNationalities, setAvailableNationalities] = useState<string[]>(
+    import.meta.env.DEV ? mockOpenMenuData.availableNationalities : []
+  );
   const [selectedCharacter, setSelectedCharacter] = useState<Character | null>(null);
 
   useNUIEvent<OpenMenuData>('openMenu', useCallback((data) => {
     setCharacters(data.characters);
     setMaxCharacters(data.maxCharacters);
+    setAvailableNationalities(data.availableNationalities || [
+      'Française',
+      'Américaine',
+      'Britannique',
+      'Allemande',
+      'Italienne',
+      'Espagnole',
+      'Portugaise',
+      'Belge',
+      'Suisse',
+      'Canadienne',
+      'Australienne',
+      'Japonaise',
+      'Chinoise',
+      'Russe',
+      'Brésilienne',
+      'Mexicaine',
+      'Argentine',
+      'Marocaine',
+      'Algérienne',
+      'Tunisienne'
+    ]);
     setIsVisible(true);
     setSelectedCharacter(null);
   }, []));
@@ -47,6 +73,7 @@ export const IdentityProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         isVisible,
         characters,
         maxCharacters,
+        availableNationalities,
         selectedCharacter,
         setSelectedCharacter,
         closeMenu,

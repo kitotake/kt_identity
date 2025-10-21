@@ -60,10 +60,46 @@
     gap: $spacing-xs;
     font-size: $font-size-sm;
     color: $color-text-secondary;
+    margin-bottom: $spacing-sm;
 
     p {
       @include flex-start;
       gap: $spacing-xs;
+    }
+  }
+
+  &__addictions {
+    margin-top: $spacing-md;
+    padding-top: $spacing-md;
+    border-top: $border-width solid $color-border-dark;
+  }
+
+  &__addictions-title {
+    font-size: $font-size-xs;
+    font-weight: $font-weight-medium;
+    color: $color-text-muted;
+    margin-bottom: $spacing-xs;
+  }
+
+  &__addictions-list {
+    @include flex-start;
+    gap: $spacing-sm;
+    flex-wrap: wrap;
+  }
+
+  &__addiction {
+    @include flex-center;
+    gap: $spacing-xs;
+    padding: $spacing-xs $spacing-sm;
+    background: rgba($color-bg-dark, 0.5);
+    border-radius: $border-radius-md;
+    font-size: $font-size-xs;
+    border: $border-width solid $color-border-dark;
+    transition: all $transition-fast;
+
+    &:hover {
+      background: rgba($color-bg-dark, 0.8);
+      border-color: $color-border-medium;
     }
   }
 
