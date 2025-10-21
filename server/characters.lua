@@ -21,29 +21,79 @@ local Nationalities = {
     'Tunisienne'
 }
 
-function GetMaxCharactersForPlayer(identifier)
-    if Config.MultiCharacterWhitelist[identifier] then
-        return Config.MultiCharacterWhitelist[identifier]
+--- Obtenir le nombre maximum de personnages pour un joueur
+---@param source number Player source
+---@return number maxCharacters
+function GetMaxCharactersForPlayer(source)
+    local xPlayer = ESX.GetPlayerFromId(source)
+    if not xPlayer then return Config.DefaultMaxCharacters end
+
+    if Config.ManualWhitelist[xPlayer.identifier] then
+        return Config.ManualWhitelist[xPlayer.identifier]
     end
+
+    local playerGroup = xPlayer.getGroup()
     
-    if Config.LimitedCharacters == 1 then
-        return 1
+    if Config.GroupPermissions[playerGroup] then
+        return Config.GroupPermissions[playerGroup]
     end
-    
-    return Config.MaxCharacters
+
+    return Config.DefaultMaxCharacters
 end
 
-function CanCreateNewCharacter(identifier)
-    local currentCount = GetCharacterCount(identifier)
-    local maxAllowed = GetMaxCharactersForPlayer(identifier)
+--- Vérifier si un joueur peut créer un nouveau personnage
+---@param source number Player source
+---@return boolean canCreate
+---@return string|nil reason
+function CanCreateNewCharacter(source)
+    local xPlayer = ESX.GetPlayerFromId(source)
+    if not xPlayer then 
+        return false, "Joueur introuvable"
+    end
+
+    local currentCount = GetCharacterCount(xPlayer.identifier)
+    local maxAllowed = GetMaxCharactersForPlayer(source)
+    
+    if Config.StrictMode and currentCount >= 1 then
+        local playerGroup = xPlayer.getGroup()
+        local canBypass = false
+        
+        for _, group in ipairs(Config.BypassGroups) do
+            if playerGroup == group then
+                canBypass = true
+                break
+            end
+        end
+        
+        if Config.ManualWhitelist[xPlayer.identifier] then
+            canBypass = true
+        end
+        
+        if not canBypass then
+            return false, Config.GetMessage('no_permission')
+        end
+    end
+    
+    if currentCount >= maxAllowed then
+        return false, Config.GetMessage('limit_reached', maxAllowed)
+    end
     
     if Config.Debug then
-        print(string.format('^2[KT Identity]^7 Character check for %s: %d/%d', identifier, currentCount, maxAllowed))
+        print(string.format(
+            '^2[KT Identity]^7 Character check for %s (%s): %d/%d - Can create: YES',
+            xPlayer.getName(),
+            xPlayer.getGroup(),
+            currentCount,
+            maxAllowed
+        ))
     end
     
-    return currentCount < maxAllowed
+    return true
 end
 
+--- Formater les personnages pour le NUI
+---@param characters table
+---@return table formatted
 function FormatCharactersForNUI(characters)
     local formatted = {}
     
@@ -67,25 +117,55 @@ function FormatCharactersForNUI(characters)
     return formatted
 end
 
-function ValidateCharacterData(data)
-    if not data.firstname or not data.lastname or not data.dateofbirth or not data.gender or not data.height then
-        return false, "Données manquantes"
+--- Valider les données d'un personnage
+---@param data table Character data
+---@param identifier string Player identifier
+---@return boolean valid
+---@return string|nil error
+function ValidateCharacterData(data, identifier)
+    if not data.firstname or not data.lastname or not data.dateofbirth or 
+       not data.gender or not data.height then
+        return false, Config.GetMessage('invalid_data', "Données manquantes")
     end
 
     if #data.firstname < 2 or #data.firstname > Config.MaxNameLength then
-        return false, "Prénom invalide (2-" .. Config.MaxNameLength .. " caractères)"
+        return false, Config.GetMessage('invalid_data', 
+            "Prénom invalide (2-" .. Config.MaxNameLength .. " caractères)")
     end
 
     if #data.lastname < 2 or #data.lastname > Config.MaxNameLength then
-        return false, "Nom invalide (2-" .. Config.MaxNameLength .. " caractères)"
+        return false, Config.GetMessage('invalid_data',
+            "Nom invalide (2-" .. Config.MaxNameLength .. " caractères)")
+    end
+
+    local fullname = (data.firstname .. " " .. data.lastname):lower()
+    for _, word in ipairs(Config.NameBlacklist) do
+        if fullname:find(word:lower()) then
+            return false, Config.GetMessage('blacklisted_name')
+        end
+    end
+
+    if Config.PreventDuplicateNames then
+        local exists = MySQL.scalar.await([[
+            SELECT COUNT(*) 
+            FROM kt_characters 
+            WHERE identifier = ? 
+            AND LOWER(firstname) = LOWER(?) 
+            AND LOWER(lastname) = LOWER(?)
+        ]], {identifier, data.firstname, data.lastname})
+
+        if exists and exists > 0 then
+            return false, Config.GetMessage('duplicate_name')
+        end
     end
 
     if data.height < Config.MinHeight or data.height > Config.MaxHeight then
-        return false, "Taille invalide (" .. Config.MinHeight .. "-" .. Config.MaxHeight .. " cm)"
+        return false, Config.GetMessage('invalid_data',
+            "Taille invalide (" .. Config.MinHeight .. "-" .. Config.MaxHeight .. " cm)")
     end
 
     if data.gender ~= 'male' and data.gender ~= 'female' then
-        return false, "Genre invalide"
+        return false, Config.GetMessage('invalid_data', "Genre invalide")
     end
 
     local dob = os.time({
@@ -97,7 +177,8 @@ function ValidateCharacterData(data)
     local age = os.difftime(os.time(), dob) / (365.25 * 24 * 60 * 60)
 
     if age < Config.MinAge or age > Config.MaxAge then
-        return false, "Âge invalide (" .. Config.MinAge .. "-" .. Config.MaxAge .. " ans)"
+        return false, Config.GetMessage('invalid_data',
+            "Âge invalide (" .. Config.MinAge .. "-" .. Config.MaxAge .. " ans)")
     end
 
     local validNationality = false
@@ -109,20 +190,25 @@ function ValidateCharacterData(data)
     end
 
     if not validNationality then
-        return false, "Nationalité invalide"
+        return false, Config.GetMessage('invalid_data', "Nationalité invalide")
     end
 
     if data.addictions then
         if data.addictions.cigarette < 0 or data.addictions.cigarette > 100 or
            data.addictions.alcohol < 0 or data.addictions.alcohol > 100 or
            data.addictions.drugs < 0 or data.addictions.drugs > 100 then
-            return false, "Valeurs d'addiction invalides (0-100)"
+            return false, Config.GetMessage('invalid_data',
+                "Valeurs d'addiction invalides (0-100)")
         end
     end
 
     return true
 end
 
+--- Charger un personnage dans ESX
+---@param source number Player source
+---@param character table Character data
+---@return boolean success
 function LoadESXCharacter(source, character)
     local xPlayer = ESX.GetPlayerFromId(source)
     if not xPlayer then
@@ -150,31 +236,54 @@ function LoadESXCharacter(source, character)
 
     UpdateLastPlayed(character.id)
 
+    if Config.LogActions then
+        print(string.format(
+            '^2[KT Identity]^7 %s (%s) loaded character: %s %s (ID: %d)',
+            xPlayer.getName(),
+            xPlayer.getGroup(),
+            character.firstname,
+            character.lastname,
+            character.id
+        ))
+    end
+
     Citizen.CreateThread(function()
-        Citizen.Wait(500)
-        
+        Wait(500)
         TriggerEvent('esx:playerLoaded', source, xPlayer)
-        
-        if Config.Debug then
-            print('^2[KT Identity]^7 Character loaded for: ' .. xPlayer.identifier)
-        end
     end)
 
     return true
 end
 
-function GetMenuData(identifier)
-    local characters = GetPlayerCharacters(identifier)
+--- Obtenir les données du menu pour un joueur
+---@param source number Player source
+---@return table menuData
+function GetMenuData(source)
+    local xPlayer = ESX.GetPlayerFromId(source)
+    if not xPlayer then 
+        return {
+            characters = {},
+            maxCharacters = Config.DefaultMaxCharacters,
+            availableNationalities = Nationalities,
+            canCreateMore = false
+        }
+    end
+
+    local characters = GetPlayerCharacters(xPlayer.identifier)
     local formattedChars = FormatCharactersForNUI(characters)
-    local maxChars = GetMaxCharactersForPlayer(identifier)
+    local maxChars = GetMaxCharactersForPlayer(source)
+    local canCreate, reason = CanCreateNewCharacter(source)
     
     return {
         characters = formattedChars,
         maxCharacters = maxChars,
         availableNationalities = Nationalities,
-        canCreateMore = CanCreateNewCharacter(identifier)
+        canCreateMore = canCreate,
+        playerGroup = xPlayer.getGroup(),
+        restrictionReason = reason
     }
 end
+
 
 exports('FormatCharactersForNUI', FormatCharactersForNUI)
 exports('ValidateCharacterData', ValidateCharacterData)

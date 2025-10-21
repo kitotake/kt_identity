@@ -2,20 +2,15 @@ fx_version 'cerulean'
 game 'gta5'
 
 name "kt_identity"
-description 'KT Identity - Multi Character System for ESX'
-version '1.3.0'
+author 'kitotake'
+description 'Système de gestion multi-personnages pour ESX'
+version '1.5.0'
 
 lua54 'yes'
 
 shared_scripts {
     '@es_extended/imports.lua',
-    'config/config.lua',
-}
-
-client_scripts {
-    'client/camera.lua',
-    'client/spawn.lua',
-    'client/main.lua',
+    'config/config.lua'
 }
 
 server_scripts {
@@ -23,16 +18,25 @@ server_scripts {
     'server/database.lua',
     'server/characters.lua',
     'server/events.lua',
-    'server/main.lua',
+    'server/main.lua'
 }
 
--- Option 1 : Si vos fichiers sont dans nui/identity/
+client_scripts {
+    'client/main.lua',
+    'client/spawn.lua',
+    'client/client_test.lua',
+    'client/camera.lua'
+}
+
 ui_page 'nui/identity/index.html'
 
 files {
     'nui/identity/index.html',
-    'nui/identity/assets/*.css',
     'nui/identity/assets/*.js',
+    'nui/identity/assets/*.css',
+    'nui/identity/assets/*.svg',
+    'nui/identity/assets/*.png',
+    'nui/identity/assets/*.jpg'
 }
 
 dependencies {
