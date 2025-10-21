@@ -1,0 +1,13 @@
+@import '../variables.scss';
+@import '../mixins.scss';
+
+.container {
+  width: 100%;
+  max-width: 64rem; 
+  margin: 0 auto;
+  padding: 0 $spacing-lg;
+
+  @include responsive(lg) {
+    padding: 0 $spacing-xl;
+  }
+}

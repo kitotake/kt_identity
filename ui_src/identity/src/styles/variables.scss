@@ -1,0 +1,94 @@
+$color-primary: #3b82f6;
+$color-primary-hover: #2563eb;
+$color-primary-light: rgba(59, 130, 246, 0.1);
+
+$color-success: #10b981;
+$color-success-hover: #059669;
+$color-success-light: rgba(16, 185, 129, 0.1);
+
+$color-danger: #ef4444;
+$color-danger-hover: #dc2626;
+$color-danger-light: rgba(239, 68, 68, 0.1);
+
+$color-warning: #f59e0b;
+$color-warning-hover: #d97706;
+
+$color-info: #06b6d4;
+$color-info-hover: #0891b2;
+
+$color-bg-dark: #0f172a;
+$color-bg-medium: #1e293b;
+$color-bg-light: #334155;
+$color-bg-overlay: rgba(0, 0, 0, 0.8);
+
+$color-text-primary: #f1f5f9;
+$color-text-secondary: #cbd5e1;
+$color-text-muted: #94a3b8;
+$color-text-disabled: #64748b;
+
+$color-border-dark: #1e293b;
+$color-border-medium: #334155;
+$color-border-light: #475569;
+
+$spacing-xs: 0.25rem;   
+$spacing-sm: 0.5rem;    
+$spacing-md: 1rem;      
+$spacing-lg: 1.5rem;    
+$spacing-xl: 2rem;      
+$spacing-2xl: 3rem;     
+$spacing-3xl: 4rem;     
+
+$border-width: 1px;
+$border-width-thick: 2px;
+
+$border-radius-sm: 0.25rem;   
+$border-radius-md: 0.5rem;    
+$border-radius-lg: 0.75rem;   
+$border-radius-xl: 1rem;      
+$border-radius-full: 9999px;
+
+$shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+$shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+$shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+$shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.4);
+$shadow-2xl: 0 25px 50px -12px rgba(0, 0, 0, 0.75);
+
+$transition-fast: 150ms ease-in-out;
+$transition-normal: 300ms ease-in-out;
+$transition-slow: 500ms ease-in-out;
+
+$ease-out-cubic: cubic-bezier(0.33, 1, 0.68, 1);
+$ease-in-out-cubic: cubic-bezier(0.65, 0, 0.35, 1);
+
+$breakpoint-xs: 480px;
+$breakpoint-sm: 640px;
+$breakpoint-md: 768px;
+$breakpoint-lg: 1024px;
+$breakpoint-xl: 1280px;
+$breakpoint-2xl: 1536px;
+
+$font-family-base: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+$font-family-mono: 'Courier New', monospace;
+
+$font-size-xs: 0.75rem;    
+$font-size-sm: 0.875rem;   
+$font-size-md: 1rem;       
+$font-size-lg: 1.125rem;   
+$font-size-xl: 1.25rem;    
+$font-size-2xl: 1.5rem;    
+$font-size-3xl: 1.875rem;  
+$font-size-4xl: 2.25rem;   
+
+$font-weight-normal: 400;
+$font-weight-medium: 500;
+$font-weight-semibold: 600;
+$font-weight-bold: 700;
+
+$line-height-tight: 1.25;
+$line-height-normal: 1.5;
+$line-height-relaxed: 1.75;
+
+$z-index-dropdown: 1000;
+$z-index-modal: 1050;
+$z-index-overlay: 1040;
+$z-index-tooltip: 1060;

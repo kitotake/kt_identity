@@ -1,0 +1,31 @@
+@import '../variables.scss';
+@import '../mixins.scss';
+
+::-webkit-scrollbar {
+  width: 0.5rem;
+  height: 0.5rem;
+}
+
+::-webkit-scrollbar-track {
+  background: $color-bg-dark;
+  border-radius: $border-radius-sm;
+}
+
+::-webkit-scrollbar-thumb {
+  background: $color-border-medium;
+  border-radius: $border-radius-sm;
+  transition: background $transition-fast;
+
+  &:hover {
+    background: $color-border-light;
+  }
+
+  &:active {
+    background: $color-bg-light;
+  }
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: $color-border-medium $color-bg-dark;
+}

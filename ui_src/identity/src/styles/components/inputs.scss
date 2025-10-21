@@ -1,0 +1,40 @@
+@import '../variables.scss';
+@import '../mixins.scss';
+
+
+.input {
+  @include input-base;
+
+  &--error {
+    border-color: $color-danger;
+
+    &:focus {
+      box-shadow: 0 0 0 3px $color-danger-light;
+    }
+  }
+
+  &--success {
+    border-color: $color-success;
+
+    &:focus {
+      box-shadow: 0 0 0 3px $color-success-light;
+    }
+  }
+}
+
+.select {
+  @include input-base;
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3E%3Cpath stroke='%239ca3af' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3E%3C/svg%3E");
+  background-position: right $spacing-sm center;
+  background-repeat: no-repeat;
+  background-size: 1.5em 1.5em;
+  padding-right: $spacing-xl;
+}
+
+.textarea {
+  @include input-base;
+  min-height: 6rem;
+  resize: vertical;
+}

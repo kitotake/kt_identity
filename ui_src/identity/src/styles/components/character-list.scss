@@ -1,0 +1,26 @@
+@import '../variables.scss';
+@import '../mixins.scss';
+
+.character-list {
+  @extend .grid;
+  @extend .grid-cols-2;
+
+  &--empty {
+    @include flex-column-center;
+    padding: $spacing-3xl 0;
+    text-align: center;
+    color: $color-text-secondary;
+
+    &__title {
+      font-size: $font-size-lg;
+      font-weight: $font-weight-semibold;
+      color: $color-text-primary;
+      margin-bottom: $spacing-sm;
+    }
+
+    &__subtitle {
+      font-size: $font-size-sm;
+      color: $color-text-muted;
+    }
+  }
+}

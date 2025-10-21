@@ -1,0 +1,93 @@
+@import '../variables.scss';
+@import '../mixins.scss';
+
+.character-card {
+  @include card;
+  padding: $spacing-lg;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, $color-primary, $color-info);
+    transform: scaleX(0);
+    transition: transform $transition-normal;
+  }
+
+  &:hover {
+    border-color: $color-border-medium;
+
+    &::before {
+      transform: scaleX(1);
+    }
+  }
+
+  &--selected {
+    @include card-selected;
+
+    &::before {
+      transform: scaleX(1);
+    }
+  }
+
+  &__content {
+    @include flex-between;
+    align-items: flex-start;
+    gap: $spacing-md;
+  }
+
+  &__info {
+    flex: 1;
+    min-width: 0; 
+  }
+
+  &__name {
+    font-size: $font-size-xl;
+    font-weight: $font-weight-bold;
+    color: $color-text-primary;
+    margin-bottom: $spacing-sm;
+    @include truncate-text;
+  }
+
+  &__details {
+    @include flex-column;
+    gap: $spacing-xs;
+    font-size: $font-size-sm;
+    color: $color-text-secondary;
+
+    p {
+      @include flex-start;
+      gap: $spacing-xs;
+    }
+  }
+
+  &__delete {
+    @include flex-center;
+    width: 2rem;
+    height: 2rem;
+    padding: 0;
+    color: $color-text-muted;
+    background: transparent;
+    border: none;
+    border-radius: $border-radius-md;
+    cursor: pointer;
+    transition: all $transition-fast;
+    flex-shrink: 0;
+
+    &:hover {
+      color: $color-danger;
+      background: $color-danger-light;
+    }
+
+    svg {
+      width: 1.25rem;
+      height: 1.25rem;
+    }
+  }
+}

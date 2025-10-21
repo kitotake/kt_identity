@@ -1,0 +1,104 @@
+@import '../variables.scss';
+@import '../mixins.scss';
+
+.identity-menu {
+  position: fixed;
+  inset: 0;
+  background: $color-bg-overlay;
+  @include flex-center;
+  padding: $spacing-lg;
+  z-index: $z-index-modal;
+  @include fade-in;
+
+  &__container {
+    @include glass-effect;
+    border-radius: $border-radius-xl;
+    box-shadow: $shadow-2xl;
+    max-width: 64rem;
+    width: 100%;
+    max-height: 90vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    @include scale-in;
+  }
+
+  &__header {
+    padding: $spacing-xl;
+    border-bottom: $border-width solid $color-border-dark;
+    background: rgba($color-bg-dark, 0.5);
+  }
+
+  &__header-top {
+    @include flex-between;
+    margin-bottom: $spacing-sm;
+  }
+
+  &__title {
+    font-size: $font-size-3xl;
+    font-weight: $font-weight-bold;
+    color: $color-text-primary;
+  }
+
+  &__close {
+    @include flex-center;
+    width: 2.5rem;
+    height: 2.5rem;
+    padding: 0;
+    background: transparent;
+    border: none;
+    color: $color-text-muted;
+    border-radius: $border-radius-md;
+    cursor: pointer;
+    transition: all $transition-fast;
+
+    &:hover {
+      color: $color-text-primary;
+      background: rgba($color-bg-light, 0.5);
+    }
+
+    svg {
+      width: 1.5rem;
+      height: 1.5rem;
+    }
+  }
+
+  &__subtitle {
+    font-size: $font-size-sm;
+    color: $color-text-secondary;
+  }
+
+  &__content {
+    flex: 1;
+    overflow-y: auto;
+    padding: $spacing-xl;
+  }
+
+  &__form-title {
+    font-size: $font-size-xl;
+    font-weight: $font-weight-bold;
+    color: $color-text-primary;
+    margin-bottom: $spacing-lg;
+  }
+
+  &__footer {
+    padding: $spacing-xl;
+    border-top: $border-width solid $color-border-dark;
+    background: rgba($color-bg-dark, 0.5);
+    @include flex-start;
+    gap: $spacing-md;
+  }
+
+  &__button {
+    flex: 1;
+    font-size: $font-size-md;
+
+    &--create {
+      @include button-success;
+    }
+
+    &--play {
+      @include button-primary;
+    }
+  }
+}

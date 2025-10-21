@@ -1,0 +1,206 @@
+@mixin flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@mixin flex-between {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+@mixin flex-start {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+@mixin flex-column {
+  display: flex;
+  flex-direction: column;
+}
+
+@mixin flex-column-center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+@mixin button-base {
+  padding: $spacing-sm $spacing-lg;
+  border-radius: $border-radius-md;
+  font-weight: $font-weight-medium;
+  font-size: $font-size-md;
+  line-height: $line-height-normal;
+  transition: all $transition-fast;
+  cursor: pointer;
+  border: none;
+  outline: none;
+  text-align: center;
+  user-select: none;
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+}
+
+@mixin button-primary {
+  @include button-base;
+  background: $color-primary;
+  color: $color-text-primary;
+
+  &:hover:not(:disabled) {
+    background: $color-primary-hover;
+    transform: translateY(-1px);
+    box-shadow: $shadow-md;
+  }
+
+  &:active:not(:disabled) {
+    transform: translateY(0);
+  }
+}
+
+@mixin button-success {
+  @include button-base;
+  background: $color-success;
+  color: $color-text-primary;
+
+  &:hover:not(:disabled) {
+    background: $color-success-hover;
+    transform: translateY(-1px);
+    box-shadow: $shadow-md;
+  }
+}
+
+@mixin button-danger {
+  @include button-base;
+  background: $color-danger;
+  color: $color-text-primary;
+
+  &:hover:not(:disabled) {
+    background: $color-danger-hover;
+  }
+}
+
+@mixin button-secondary {
+  @include button-base;
+  background: $color-bg-light;
+  color: $color-text-primary;
+
+  &:hover:not(:disabled) {
+    background: $color-border-light;
+  }
+}
+
+@mixin button-ghost {
+  @include button-base;
+  background: transparent;
+  color: $color-text-secondary;
+
+  &:hover:not(:disabled) {
+    background: rgba($color-bg-light, 0.5);
+    color: $color-text-primary;
+  }
+}
+
+@mixin card {
+  background: rgba($color-bg-medium, 0.8);
+  border: $border-width-thick solid $color-border-dark;
+  border-radius: $border-radius-lg;
+  transition: all $transition-normal;
+  backdrop-filter: blur(10px);
+}
+
+@mixin card-hover {
+  &:hover {
+    border-color: $color-border-medium;
+    box-shadow: $shadow-lg;
+    transform: translateY(-2px);
+  }
+}
+
+@mixin card-selected {
+  border-color: $color-primary;
+  background: rgba($color-primary, 0.15);
+  box-shadow: 0 0 0 1px $color-primary;
+}
+
+@mixin input-base {
+  width: 100%;
+  padding: $spacing-sm $spacing-md;
+  background: $color-bg-light;
+  border: $border-width solid $color-border-medium;
+  border-radius: $border-radius-md;
+  color: $color-text-primary;
+  font-size: $font-size-md;
+  font-family: $font-family-base;
+  outline: none;
+  transition: all $transition-fast;
+
+  &::placeholder {
+    color: $color-text-muted;
+  }
+
+  &:focus {
+    border-color: $color-primary;
+    box-shadow: 0 0 0 3px $color-primary-light;
+    background: lighten($color-bg-light, 3%);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    background: $color-bg-dark;
+  }
+}
+
+@mixin responsive($breakpoint) {
+  @if $breakpoint == xs {
+    @media (min-width: $breakpoint-xs) { @content; }
+  } @else if $breakpoint == sm {
+    @media (min-width: $breakpoint-sm) { @content; }
+  } @else if $breakpoint == md {
+    @media (min-width: $breakpoint-md) { @content; }
+  } @else if $breakpoint == lg {
+    @media (min-width: $breakpoint-lg) { @content; }
+  } @else if $breakpoint == xl {
+    @media (min-width: $breakpoint-xl) { @content; }
+  } @else if $breakpoint == 2xl {
+    @media (min-width: $breakpoint-2xl) { @content; }
+  }
+}
+
+@mixin fade-in($duration: $transition-normal) {
+  animation: fadeIn $duration ease-in-out;
+}
+
+@mixin slide-up($duration: $transition-normal) {
+  animation: slideUp $duration $ease-out-cubic;
+}
+
+@mixin scale-in($duration: $transition-normal) {
+  animation: scaleIn $duration $ease-out-cubic;
+}
+
+@mixin truncate-text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@mixin truncate-lines($lines: 2) {
+  display: -webkit-box;
+  -webkit-line-clamp: $lines;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+@mixin glass-effect {
+  background: rgba($color-bg-medium, 0.6);
+  backdrop-filter: blur(20px) saturate(180%);
+  border: $border-width solid rgba(255, 255, 255, 0.1);
+}
